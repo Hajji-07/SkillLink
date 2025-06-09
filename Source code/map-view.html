@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Map View - SkillLink</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .map-container {
+            position: relative;
+            width: 100%;
+            height: calc(100vh - 200px);
+            min-height: 500px;
+            background: #E5E7EB;
+            overflow: hidden;
+        }
+
+        .map-grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 0, 0, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 0, 0, 0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+        }
+
+        .map-controls {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            display: flex;
+            gap: 0.5rem;
+            z-index: 10;
+        }
+
+        .map-control-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: white;
+            border: none;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-color);
+        }
+
+        .map-control-btn:hover {
+            background: var(--light-background);
+        }
+
+        .student-marker {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            transform: translate(-50%, -50%);
+            cursor: pointer;
+        }
+
+        .marker-photo {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid white;
+            box-shadow: var(--shadow);
+        }
+
+        .marker-status {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            border: 2px solid white;
+        }
+
+        .status-online {
+            background: var(--secondary-color);
+        }
+
+        .status-offline {
+            background: #EF4444;
+        }
+
+        .marker-tooltip {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            box-shadow: var(--shadow);
+            width: 200px;
+            display: none;
+            z-index: 100;
+        }
+
+        .student-marker:hover .marker-tooltip {
+            display: block;
+        }
+
+        .tooltip-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .tooltip-photo {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .tooltip-name {
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .tooltip-skills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.25rem;
+            margin: 0.5rem 0;
+        }
+
+        .tooltip-skill {
+            background: var(--light-background);
+            padding: 0.25rem 0.5rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+        }
+
+        .tooltip-actions {
+            margin-top: 0.5rem;
+        }
+
+        .view-profile-btn {
+            width: 100%;
+            text-align: center;
+        }
+
+        .map-legend {
+            position: absolute;
+            bottom: 1rem;
+            left: 1rem;
+            background: white;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            box-shadow: var(--shadow);
+            z-index: 10;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 2px solid white;
+        }
+
+        @media (max-width: 768px) {
+            .map-container {
+                height: calc(100vh - 150px);
+            }
+
+            .marker-tooltip {
+                width: 180px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <nav class="nav">
+            <div class="logo">SkillLink</div>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="browse-students.html" class="nav-link">Find Help</a>
+                <a href="browse-jobs.html" class="nav-link">Find Jobs</a>
+                <a href="post-job.html" class="btn btn-primary">Post a Job</a>
+                <a href="create-profile.html" class="btn btn-secondary">Join as Student</a>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <div class="container">
+            <h1 class="text-center mb-4">Find Help Near You</h1>
+            
+            <div class="map-container">
+                <div class="map-grid"></div>
+                
+                <div class="map-controls">
+                    <button class="map-control-btn" title="Zoom In">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                    <button class="map-control-btn" title="Zoom Out">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                    <button class="map-control-btn" title="Center Map">
+                        <i class="fas fa-crosshairs"></i>
+                    </button>
+                </div>
+
+                <div class="map-legend">
+                    <div class="legend-item">
+                        <div class="legend-dot status-online"></div>
+                        <span>Available</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-dot status-offline"></div>
+                        <span>Unavailable</span>
+                    </div>
+                </div>
+
+                <!-- Student markers will be added by JavaScript -->
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>SkillLink</h4>
+                    <p>Connecting students with opportunities</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="browse-students.html">Find Help</a></li>
+                        <li><a href="browse-jobs.html">Find Jobs</a></li>
+                        <li><a href="post-job.html">Post a Job</a></li>
+                        <li><a href="create-profile.html">Create Profile</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact</h4>
+                    <ul>
+                        <li>Email: support@skilllink.com</li>
+                        <li>Phone: (555) 123-4567</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 SkillLink. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/app.js"></script>
+    <script>
+        // Mock data for students
+        const students = [
+            {
+                id: 1,
+                name: "Amina Benali",
+                photo: "https://i.pravatar.cc/150?img=1",
+                skills: ["Math", "Science", "Tutoring"],
+                status: "online",
+                position: { x: 25, y: 30 }
+            },
+            {
+                id: 2,
+                name: "Mehdi Alami",
+                photo: "https://i.pravatar.cc/150?img=2",
+                skills: ["Tech Support", "Programming"],
+                status: "offline",
+                position: { x: 45, y: 60 }
+            },
+            {
+                id: 3,
+                name: "Fatima Zahra",
+                photo: "https://i.pravatar.cc/150?img=3",
+                skills: ["Babysitting", "Child Care"],
+                status: "online",
+                position: { x: 70, y: 40 }
+            },
+            {
+                id: 4,
+                name: "Youssef El Fathi",
+                photo: "https://i.pravatar.cc/150?img=4",
+                skills: ["Moving", "Heavy Lifting"],
+                status: "online",
+                position: { x: 30, y: 70 }
+            },
+            {
+                id: 5,
+                name: "Laila Benjelloun",
+                photo: "https://i.pravatar.cc/150?img=5",
+                skills: ["Arabic", "French"],
+                status: "online",
+                position: { x: 60, y: 50 }
+            },
+            {
+                id: 6,
+                name: "Karim Bennis",
+                photo: "https://i.pravatar.cc/150?img=6",
+                skills: ["Photography", "Videography"],
+                status: "offline",
+                position: { x: 40, y: 45 }
+            }
+        ];
+
+        // Function to create student marker
+        function createStudentMarker(student) {
+            const marker = document.createElement('div');
+            marker.className = 'student-marker';
+            marker.style.left = `${student.position.x}%`;
+            marker.style.top = `${student.position.y}%`;
+
+            marker.innerHTML = `
+                <img src="${student.photo}" alt="${student.name}" class="marker-photo">
+                <div class="marker-status status-${student.status}"></div>
+                <div class="marker-tooltip">
+                    <div class="tooltip-header">
+                        <img src="${student.photo}" alt="${student.name}" class="tooltip-photo">
+                        <h4 class="tooltip-name">${student.name}</h4>
+                    </div>
+                    <div class="tooltip-skills">
+                        ${student.skills.map(skill => `<span class="tooltip-skill">${skill}</span>`).join('')}
+                    </div>
+                    <div class="tooltip-actions">
+                        <button class="btn btn-primary view-profile-btn" onclick="handleViewProfile(${student.id})">
+                            View Profile
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            return marker;
+        }
+
+        // Function to render student markers
+        function renderStudentMarkers() {
+            const mapContainer = document.querySelector('.map-container');
+            students.forEach(student => {
+                const marker = createStudentMarker(student);
+                mapContainer.appendChild(marker);
+            });
+        }
+
+        // Handle view profile button click
+        function handleViewProfile(studentId) {
+            showSuccessMessage('Redirecting to profile...');
+        }
+
+        // Handle map control buttons
+        document.querySelectorAll('.map-control-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                showSuccessMessage('Map control clicked');
+            });
+        });
+
+        // Initial render
+        renderStudentMarkers();
+    </script>
+</body>
+</html> 

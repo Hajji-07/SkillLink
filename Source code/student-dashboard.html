@@ -1,0 +1,1382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard - SkillLink</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .dashboard {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .sidebar {
+            background: white;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            height: fit-content;
+        }
+
+        .profile-card {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .profile-photo {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin: 0 auto 1rem;
+            background: var(--light-background);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: var(--primary-color);
+        }
+
+        .profile-name {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .profile-email {
+            color: var(--light-text);
+            font-size: 0.875rem;
+        }
+
+        .nav-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .nav-item {
+            margin-bottom: 0.5rem;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            border-radius: 0.375rem;
+            color: var(--text-color);
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: var(--light-background);
+            color: var(--primary-color);
+        }
+
+        .nav-link i {
+            width: 1.25rem;
+        }
+
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        .stat-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .stat-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 0.5rem;
+            background: var(--light-background);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-color);
+            font-size: 1.25rem;
+        }
+
+        .stat-title {
+            color: var(--light-text);
+            font-size: 0.875rem;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .section {
+            background: white;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .job-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .job-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 0.375rem;
+            transition: all 0.2s;
+        }
+
+        .job-item:hover {
+            border-color: var(--primary-color);
+            background: var(--light-background);
+        }
+
+        .job-info {
+            flex: 1;
+        }
+
+        .job-title {
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+
+        .job-meta {
+            display: flex;
+            gap: 1rem;
+            color: var(--light-text);
+            font-size: 0.875rem;
+        }
+
+        .job-status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .status-pending {
+            background: #FEF3C7;
+            color: #92400E;
+        }
+
+        .status-accepted {
+            background: #D1FAE5;
+            color: #065F46;
+        }
+
+        .status-rejected {
+            background: #FEE2E2;
+            color: #991B1B;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                position: sticky;
+                top: 1rem;
+            }
+        }
+
+        /* New styles for interactive elements */
+        .dashboard-section {
+            display: none;
+        }
+
+        .dashboard-section.active {
+            display: block;
+        }
+
+        .job-filters {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .filter-btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 0.375rem;
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .filter-btn.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .profile-details {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .profile-field {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .profile-field label {
+            color: var(--light-text);
+            font-size: 0.875rem;
+        }
+
+        .profile-field p {
+            font-size: 1.125rem;
+            color: var(--text-color);
+        }
+
+        .earnings-chart {
+            background: var(--light-background);
+            border-radius: 0.5rem;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .earnings-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .summary-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        .summary-card h3 {
+            color: var(--light-text);
+            font-size: 0.875rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .summary-card .amount {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .settings-form {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-switch label {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .toggle-switch label:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        .toggle-switch input:checked + label {
+            background-color: var(--primary-color);
+        }
+
+        .toggle-switch input:checked + label:before {
+            transform: translateX(26px);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 15% auto;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            width: 80%;
+            max-width: 500px;
+            position: relative;
+        }
+
+        .close {
+            position: absolute;
+            right: 1rem;
+            top: 1rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        /* Profile Section Styles */
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            padding: 2rem;
+            background: white;
+            border-radius: 0.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3rem;
+        }
+
+        .profile-info h2 {
+            margin: 0;
+            color: var(--text-color);
+        }
+
+        .profile-info p {
+            margin: 0.5rem 0;
+            color: var(--light-text);
+        }
+
+        .profile-membership {
+            font-size: 0.875rem;
+        }
+
+        .profile-content {
+            display: grid;
+            gap: 2rem;
+        }
+
+        .profile-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        .profile-card h3 {
+            margin-bottom: 1.5rem;
+            color: var(--text-color);
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .info-item label {
+            display: block;
+            font-size: 0.875rem;
+            color: var(--light-text);
+            margin-bottom: 0.5rem;
+        }
+
+        .info-item p {
+            margin: 0;
+            color: var(--text-color);
+            font-weight: 500;
+        }
+
+        .skills-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .skill-tag {
+            background: var(--light-background);
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            font-size: 0.875rem;
+            color: var(--text-color);
+        }
+
+        .education-item, .experience-item {
+            padding: 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .education-header, .experience-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .education-header h4, .experience-header h4 {
+            margin: 0;
+            color: var(--text-color);
+        }
+
+        /* Settings Section Styles */
+        .settings-header {
+            margin-bottom: 2rem;
+        }
+
+        .settings-header h2 {
+            margin: 0;
+            color: var(--text-color);
+        }
+
+        .settings-header p {
+            margin: 0.5rem 0 0;
+            color: var(--light-text);
+        }
+
+        .settings-content {
+            display: grid;
+            gap: 2rem;
+        }
+
+        .settings-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        .settings-card h3 {
+            margin-bottom: 1.5rem;
+            color: var(--text-color);
+        }
+
+        .settings-group {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .toggle-group {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Switch Toggle Styles */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+        }
+
+        input:checked + .slider {
+            background-color: var(--primary-color);
+        }
+
+        input:focus + .slider {
+            box-shadow: 0 0 1px var(--primary-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 34px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        .settings-actions {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <nav class="nav">
+            <div class="logo">SkillLink</div>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="browse-jobs.html" class="nav-link">Find Jobs</a>
+                <a href="map-view.html" class="nav-link"><i class="fas fa-map-marker-alt"></i> Map View</a>
+                <a href="post-job.html" class="btn btn-primary">Post a Job</a>
+                <a href="create-profile.html" class="btn btn-secondary">Join as Student</a>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <div class="container">
+            <div class="dashboard">
+                <aside class="sidebar">
+                    <div class="profile-card">
+                        <div class="profile-photo">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <h2 class="profile-name">Amina Benali</h2>
+                        <p class="profile-email">amina@example.com</p>
+                    </div>
+
+                    <nav>
+                        <ul class="nav-menu">
+                            <li class="nav-item">
+                                <a href="#" class="nav-link active" data-section="dashboard-section">
+                                    <i class="fas fa-home"></i>
+                                    Dashboard
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#" class="nav-link" data-section="profile-section">
+                                    <i class="fas fa-user"></i>
+                                    Profile
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#" class="nav-link" data-section="my-jobs-section">
+                                    <i class="fas fa-briefcase"></i>
+                                    My Jobs
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#" class="nav-link" data-section="earnings-section">
+                                    <i class="fas fa-wallet"></i>
+                                    Earnings
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#" class="nav-link" data-section="settings-section">
+                                    <i class="fas fa-cog"></i>
+                                    Settings
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#" class="nav-link logout-btn">
+                                    <i class="fas fa-sign-out-alt"></i>
+                                    Logout
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </aside>
+
+                <div class="main-content">
+                    <!-- Dashboard Section -->
+                    <div id="dashboard-section" class="dashboard-section active">
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-header">
+                                    <div class="stat-icon">
+                                        <i class="fas fa-briefcase"></i>
+                                    </div>
+                                    <div>
+                                        <div class="stat-title">Total Jobs</div>
+                                        <div class="stat-value">12</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="stat-card">
+                                <div class="stat-header">
+                                    <div class="stat-icon">
+                                        <i class="fas fa-check-circle"></i>
+                                    </div>
+                                    <div>
+                                        <div class="stat-title">Completed</div>
+                                        <div class="stat-value">8</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="stat-card">
+                                <div class="stat-header">
+                                    <div class="stat-icon">
+                                        <i class="fas fa-star"></i>
+                                    </div>
+                                    <div>
+                                        <div class="stat-title">Rating</div>
+                                        <div class="stat-value">4.8</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="stat-card">
+                                <div class="stat-header">
+                                    <div class="stat-icon">
+                                        <i class="fas fa-wallet"></i>
+                                    </div>
+                                    <div>
+                                        <div class="stat-title">Earnings</div>
+                                        <div class="stat-value">MAD 2,400</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <section class="section">
+                            <div class="section-header">
+                                <h2 class="section-title">Recent Applications</h2>
+                                <a href="#" class="btn btn-secondary">View All</a>
+                            </div>
+
+                            <div class="job-list">
+                                <div class="job-item" data-job-id="1">
+                                    <div class="job-info">
+                                        <h3 class="job-title">Math Tutoring for High School Student</h3>
+                                        <div class="job-meta">
+                                            <span><i class="fas fa-map-marker-alt"></i> Casablanca, Maarif</span>
+                                            <span><i class="fas fa-clock"></i> Posted 2 days ago</span>
+                                        </div>
+                                    </div>
+                                    <span class="job-status status-pending">Pending</span>
+                                </div>
+
+                                <div class="job-item" data-job-id="2">
+                                    <div class="job-info">
+                                        <h3 class="job-title">Website Development</h3>
+                                        <div class="job-meta">
+                                            <span><i class="fas fa-map-marker-alt"></i> Rabat, Agdal</span>
+                                            <span><i class="fas fa-clock"></i> Posted 1 week ago</span>
+                                        </div>
+                                    </div>
+                                    <span class="job-status status-accepted">Accepted</span>
+                                </div>
+
+                                <div class="job-item" data-job-id="3">
+                                    <div class="job-info">
+                                        <h3 class="job-title">French Language Practice</h3>
+                                        <div class="job-meta">
+                                            <span><i class="fas fa-map-marker-alt"></i> Marrakech, Hivernage</span>
+                                            <span><i class="fas fa-clock"></i> Posted 2 weeks ago</span>
+                                        </div>
+                                    </div>
+                                    <span class="job-status status-rejected">Rejected</span>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+
+                    <!-- Profile Section -->
+                    <div id="profile-section" class="dashboard-section" style="display: none;">
+                        <div class="profile-header">
+                            <div class="profile-avatar">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="profile-info">
+                                <h2 id="profile-name">Loading...</h2>
+                                <p id="profile-email">Loading...</p>
+                                <p class="profile-membership">Member since <span id="profile-date">Loading...</span></p>
+                            </div>
+                        </div>
+
+                        <div class="profile-content">
+                            <div class="profile-card">
+                                <h3>Personal Information</h3>
+                                <div class="info-grid">
+                                    <div class="info-item">
+                                        <label>Full Name</label>
+                                        <p id="profile-fullname">Loading...</p>
+                                    </div>
+                                    <div class="info-item">
+                                        <label>Email</label>
+                                        <p id="profile-email-detail">Loading...</p>
+                                    </div>
+                                    <div class="info-item">
+                                        <label>Location</label>
+                                        <p id="profile-location">Not specified</p>
+                                    </div>
+                                    <div class="info-item">
+                                        <label>Phone</label>
+                                        <p id="profile-phone">Not specified</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="profile-card">
+                                <h3>Skills & Expertise</h3>
+                                <div class="skills-container" id="skills-container">
+                                    <div class="skill-tag">Loading skills...</div>
+                                </div>
+                                <button class="btn btn-secondary" onclick="addSkill()">
+                                    <i class="fas fa-plus"></i> Add Skill
+                                </button>
+                            </div>
+
+                            <div class="profile-card">
+                                <h3>Education</h3>
+                                <div class="education-list" id="education-list">
+                                    <div class="education-item">
+                                        <div class="education-header">
+                                            <h4>Loading education...</h4>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button class="btn btn-secondary" onclick="addEducation()">
+                                    <i class="fas fa-plus"></i> Add Education
+                                </button>
+                            </div>
+
+                            <div class="profile-card">
+                                <h3>Work Experience</h3>
+                                <div class="experience-list" id="experience-list">
+                                    <div class="experience-item">
+                                        <div class="experience-header">
+                                            <h4>Loading experience...</h4>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button class="btn btn-secondary" onclick="addExperience()">
+                                    <i class="fas fa-plus"></i> Add Experience
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- My Jobs Section -->
+                    <div id="my-jobs-section" class="dashboard-section">
+                        <section class="section">
+                            <div class="section-header">
+                                <h2 class="section-title">My Jobs</h2>
+                                <a href="browse-jobs.html" class="btn btn-primary">Find New Jobs</a>
+                            </div>
+                            <div class="job-filters">
+                                <button class="filter-btn active" data-filter="all">All</button>
+                                <button class="filter-btn" data-filter="pending">Pending</button>
+                                <button class="filter-btn" data-filter="accepted">Accepted</button>
+                                <button class="filter-btn" data-filter="completed">Completed</button>
+                            </div>
+                            <div class="job-list">
+                                <!-- Jobs will be filtered here -->
+                            </div>
+                        </section>
+                    </div>
+
+                    <!-- Earnings Section -->
+                    <div id="earnings-section" class="dashboard-section">
+                        <section class="section">
+                            <div class="section-header">
+                                <h2 class="section-title">Earnings Overview</h2>
+                                <button class="btn btn-secondary">Download Report</button>
+                            </div>
+                            <div class="earnings-chart">
+                                <!-- Chart will be added here -->
+                                <div class="placeholder-chart">
+                                    <p>Earnings chart will be displayed here</p>
+                                </div>
+                            </div>
+                            <div class="earnings-summary">
+                                <div class="summary-card">
+                                    <h3>Total Earnings</h3>
+                                    <p class="amount">MAD 2,400</p>
+                                </div>
+                                <div class="summary-card">
+                                    <h3>This Month</h3>
+                                    <p class="amount">MAD 800</p>
+                                </div>
+                                <div class="summary-card">
+                                    <h3>Pending</h3>
+                                    <p class="amount">MAD 200</p>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+
+                    <!-- Settings Section -->
+                    <div id="settings-section" class="dashboard-section" style="display: none;">
+                        <div class="settings-header">
+                            <h2>Account Settings</h2>
+                            <p>Manage your account preferences and notifications</p>
+                        </div>
+
+                        <div class="settings-content">
+                            <div class="settings-card">
+                                <h3>Profile Settings</h3>
+                                <div class="settings-group">
+                                    <label>Profile Visibility</label>
+                                    <select id="profile-visibility" class="form-control">
+                                        <option value="public">Public</option>
+                                        <option value="private">Private</option>
+                                        <option value="connections">Connections Only</option>
+                                    </select>
+                                </div>
+                                <div class="settings-group">
+                                    <label>Profile Language</label>
+                                    <select id="profile-language" class="form-control">
+                                        <option value="en">English</option>
+                                        <option value="fr">French</option>
+                                        <option value="es">Spanish</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="settings-card">
+                                <h3>Notification Preferences</h3>
+                                <div class="settings-group">
+                                    <div class="toggle-group">
+                                        <label>Email Notifications</label>
+                                        <label class="switch">
+                                            <input type="checkbox" id="email-notifications" checked>
+                                            <span class="slider round"></span>
+                                        </label>
+                                    </div>
+                                    <div class="toggle-group">
+                                        <label>Job Alerts</label>
+                                        <label class="switch">
+                                            <input type="checkbox" id="job-alerts" checked>
+                                            <span class="slider round"></span>
+                                        </label>
+                                    </div>
+                                    <div class="toggle-group">
+                                        <label>Message Notifications</label>
+                                        <label class="switch">
+                                            <input type="checkbox" id="message-notifications" checked>
+                                            <span class="slider round"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="settings-card">
+                                <h3>Privacy Settings</h3>
+                                <div class="settings-group">
+                                    <div class="toggle-group">
+                                        <label>Show Online Status</label>
+                                        <label class="switch">
+                                            <input type="checkbox" id="online-status" checked>
+                                            <span class="slider round"></span>
+                                        </label>
+                                    </div>
+                                    <div class="toggle-group">
+                                        <label>Show Activity Status</label>
+                                        <label class="switch">
+                                            <input type="checkbox" id="activity-status" checked>
+                                            <span class="slider round"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="settings-card">
+                                <h3>Account Security</h3>
+                                <div class="settings-group">
+                                    <button class="btn btn-secondary" onclick="changePassword()">
+                                        <i class="fas fa-key"></i> Change Password
+                                    </button>
+                                    <button class="btn btn-secondary" onclick="enable2FA()">
+                                        <i class="fas fa-shield-alt"></i> Enable Two-Factor Authentication
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="settings-actions">
+                                <button class="btn btn-primary" onclick="saveSettings()">
+                                    <i class="fas fa-save"></i> Save Changes
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>SkillLink</h4>
+                    <p>Connecting students with opportunities</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="browse-students.html">Find Help</a></li>
+                        <li><a href="browse-jobs.html">Find Jobs</a></li>
+                        <li><a href="post-job.html">Post a Job</a></li>
+                        <li><a href="create-profile.html">Create Profile</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact</h4>
+                    <ul>
+                        <li>Email: support@skilllink.com</li>
+                        <li>Phone: (555) 123-4567</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 SkillLink. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/app.js"></script>
+    <script>
+        // Check if user is logged in
+        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        if (!currentUser) {
+            window.location.href = 'student-login.html';
+        }
+
+        // Update profile information
+        document.querySelector('.profile-name').textContent = `${currentUser.firstName} ${currentUser.lastName}`;
+        document.querySelector('.profile-email').textContent = currentUser.email;
+
+        // Handle navigation menu clicks
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const section = this.getAttribute('data-section');
+                
+                // Remove active class from all links
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                // Add active class to clicked link
+                this.classList.add('active');
+
+                // Hide all sections
+                document.querySelectorAll('.dashboard-section').forEach(s => s.style.display = 'none');
+                // Show selected section
+                document.getElementById(section).style.display = 'block';
+            });
+        });
+
+        // Handle job filters
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                const filter = this.getAttribute('data-filter');
+                filterJobs(filter);
+            });
+        });
+
+        function filterJobs(filter) {
+            const jobs = document.querySelectorAll('.job-item');
+            jobs.forEach(job => {
+                const status = job.querySelector('.job-status').textContent.toLowerCase();
+                if (filter === 'all' || status === filter) {
+                    job.style.display = 'flex';
+                } else {
+                    job.style.display = 'none';
+                }
+            });
+        }
+
+        // Handle job item clicks
+        document.querySelectorAll('.job-item').forEach(job => {
+            job.addEventListener('click', function() {
+                const jobId = this.getAttribute('data-job-id');
+                const jobTitle = this.querySelector('.job-title').textContent;
+                const jobLocation = this.querySelector('.job-meta span:first-child').textContent;
+                const jobStatus = this.querySelector('.job-status').textContent;
+                
+                showJobDetails(jobId, jobTitle, jobLocation, jobStatus);
+            });
+        });
+
+        // Function to show job details
+        function showJobDetails(jobId, title, location, status) {
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            modal.style.display = 'block';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <span class="close">&times;</span>
+                    <h2>${title}</h2>
+                    <p><i class="fas fa-map-marker-alt"></i> ${location}</p>
+                    <p><strong>Status:</strong> ${status}</p>
+                    <div class="modal-actions">
+                        <button class="btn btn-primary">View Details</button>
+                        <button class="btn btn-secondary">Message Client</button>
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(modal);
+
+            // Close modal when clicking the X
+            modal.querySelector('.close').onclick = function() {
+                modal.remove();
+            };
+
+            // Close modal when clicking outside
+            window.onclick = function(event) {
+                if (event.target === modal) {
+                    modal.remove();
+                }
+            };
+        }
+
+        // Handle settings toggles
+        document.querySelectorAll('.toggle-switch input').forEach(toggle => {
+            toggle.addEventListener('change', function() {
+                const setting = this.id;
+                const value = this.checked;
+                // Save setting to localStorage
+                const settings = JSON.parse(localStorage.getItem('userSettings') || '{}');
+                settings[setting] = value;
+                localStorage.setItem('userSettings', JSON.stringify(settings));
+            });
+        });
+
+        // Load saved settings
+        const settings = JSON.parse(localStorage.getItem('userSettings') || '{}');
+        Object.entries(settings).forEach(([setting, value]) => {
+            const toggle = document.getElementById(setting);
+            if (toggle) {
+                toggle.checked = value;
+            }
+        });
+
+        // Handle profile edit button
+        document.getElementById('editProfileBtn').addEventListener('click', function() {
+            // Show edit profile modal
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            modal.style.display = 'block';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <span class="close">&times;</span>
+                    <h2>Edit Profile</h2>
+                    <form class="auth-form">
+                        <div class="form-group">
+                            <label for="editFirstName">First Name</label>
+                            <input type="text" id="editFirstName" value="${currentUser.firstName}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editLastName">Last Name</label>
+                            <input type="text" id="editLastName" value="${currentUser.lastName}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editEmail">Email</label>
+                            <input type="email" id="editEmail" value="${currentUser.email}" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </form>
+                </div>
+            `;
+
+            document.body.appendChild(modal);
+
+            // Handle form submission
+            modal.querySelector('form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const updatedUser = {
+                    ...currentUser,
+                    firstName: document.getElementById('editFirstName').value,
+                    lastName: document.getElementById('editLastName').value,
+                    email: document.getElementById('editEmail').value
+                };
+
+                // Update user in localStorage
+                const users = JSON.parse(localStorage.getItem('users') || '[]');
+                const userIndex = users.findIndex(u => u.email === currentUser.email);
+                if (userIndex !== -1) {
+                    users[userIndex] = updatedUser;
+                    localStorage.setItem('users', JSON.stringify(users));
+                    localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+                    
+                    // Update displayed information
+                    document.querySelector('.profile-name').textContent = 
+                        `${updatedUser.firstName} ${updatedUser.lastName}`;
+                    document.querySelector('.profile-email').textContent = updatedUser.email;
+                    
+                    // Close modal
+                    modal.remove();
+                }
+            });
+
+            // Close modal when clicking the X
+            modal.querySelector('.close').onclick = function() {
+                modal.remove();
+            };
+
+            // Close modal when clicking outside
+            window.onclick = function(event) {
+                if (event.target === modal) {
+                    modal.remove();
+                }
+            };
+        });
+
+        // Add logout functionality
+        document.querySelector('.logout-btn').addEventListener('click', function(e) {
+            e.preventDefault();
+            localStorage.removeItem('currentUser');
+            window.location.href = 'student-login.html';
+        });
+
+        // Profile Section Functions
+        function loadProfileData() {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            if (currentUser) {
+                // Update profile header
+                document.getElementById('profile-name').textContent = `${currentUser.firstName} ${currentUser.lastName}`;
+                document.getElementById('profile-email').textContent = currentUser.email;
+                document.getElementById('profile-date').textContent = new Date().toLocaleDateString();
+                
+                // Update profile details
+                document.getElementById('profile-fullname').textContent = `${currentUser.firstName} ${currentUser.lastName}`;
+                document.getElementById('profile-email-detail').textContent = currentUser.email;
+                
+                // Load skills
+                const skills = currentUser.skills || [];
+                const skillsContainer = document.getElementById('skills-container');
+                skillsContainer.innerHTML = skills.length ? 
+                    skills.map(skill => `<div class="skill-tag">${skill}</div>`).join('') :
+                    '<div class="skill-tag">No skills added yet</div>';
+                
+                // Load education
+                const education = currentUser.education || [];
+                const educationList = document.getElementById('education-list');
+                educationList.innerHTML = education.length ?
+                    education.map(edu => `
+                        <div class="education-item">
+                            <div class="education-header">
+                                <h4>${edu.school}</h4>
+                                <span>${edu.degree}</span>
+                            </div>
+                            <p>${edu.year}</p>
+                        </div>
+                    `).join('') :
+                    '<div class="education-item"><div class="education-header"><h4>No education added yet</h4></div></div>';
+                
+                // Load experience
+                const experience = currentUser.experience || [];
+                const experienceList = document.getElementById('experience-list');
+                experienceList.innerHTML = experience.length ?
+                    experience.map(exp => `
+                        <div class="experience-item">
+                            <div class="experience-header">
+                                <h4>${exp.company}</h4>
+                                <span>${exp.position}</span>
+                            </div>
+                            <p>${exp.duration}</p>
+                        </div>
+                    `).join('') :
+                    '<div class="experience-item"><div class="experience-header"><h4>No experience added yet</h4></div></div>';
+            }
+        }
+
+        function addSkill() {
+            const skill = prompt('Enter a new skill:');
+            if (skill) {
+                const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+                if (!currentUser.skills) currentUser.skills = [];
+                currentUser.skills.push(skill);
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                loadProfileData();
+            }
+        }
+
+        function addEducation() {
+            const school = prompt('Enter school name:');
+            const degree = prompt('Enter degree:');
+            const year = prompt('Enter year:');
+            
+            if (school && degree && year) {
+                const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+                if (!currentUser.education) currentUser.education = [];
+                currentUser.education.push({ school, degree, year });
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                loadProfileData();
+            }
+        }
+
+        function addExperience() {
+            const company = prompt('Enter company name:');
+            const position = prompt('Enter position:');
+            const duration = prompt('Enter duration:');
+            
+            if (company && position && duration) {
+                const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+                if (!currentUser.experience) currentUser.experience = [];
+                currentUser.experience.push({ company, position, duration });
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                loadProfileData();
+            }
+        }
+
+        // Settings Section Functions
+        function loadSettings() {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            if (currentUser) {
+                // Load profile settings
+                document.getElementById('profile-visibility').value = currentUser.profileVisibility || 'public';
+                document.getElementById('profile-language').value = currentUser.profileLanguage || 'en';
+                
+                // Load notification settings
+                document.getElementById('email-notifications').checked = currentUser.emailNotifications !== false;
+                document.getElementById('job-alerts').checked = currentUser.jobAlerts !== false;
+                document.getElementById('message-notifications').checked = currentUser.messageNotifications !== false;
+                
+                // Load privacy settings
+                document.getElementById('online-status').checked = currentUser.showOnlineStatus !== false;
+                document.getElementById('activity-status').checked = currentUser.showActivityStatus !== false;
+            }
+        }
+
+        function saveSettings() {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            if (currentUser) {
+                // Save profile settings
+                currentUser.profileVisibility = document.getElementById('profile-visibility').value;
+                currentUser.profileLanguage = document.getElementById('profile-language').value;
+                
+                // Save notification settings
+                currentUser.emailNotifications = document.getElementById('email-notifications').checked;
+                currentUser.jobAlerts = document.getElementById('job-alerts').checked;
+                currentUser.messageNotifications = document.getElementById('message-notifications').checked;
+                
+                // Save privacy settings
+                currentUser.showOnlineStatus = document.getElementById('online-status').checked;
+                currentUser.showActivityStatus = document.getElementById('activity-status').checked;
+                
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                showSuccessMessage('Settings saved successfully!');
+            }
+        }
+
+        function changePassword() {
+            const currentPassword = prompt('Enter current password:');
+            const newPassword = prompt('Enter new password:');
+            const confirmPassword = prompt('Confirm new password:');
+            
+            if (currentPassword && newPassword && confirmPassword) {
+                const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+                if (currentUser.password === currentPassword) {
+                    if (newPassword === confirmPassword) {
+                        currentUser.password = newPassword;
+                        localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                        showSuccessMessage('Password changed successfully!');
+                    } else {
+                        showErrorMessage('New passwords do not match!');
+                    }
+                } else {
+                    showErrorMessage('Current password is incorrect!');
+                }
+            }
+        }
+
+        function enable2FA() {
+            showSuccessMessage('Two-factor authentication feature coming soon!');
+        }
+
+        // Initialize profile and settings when the page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            loadProfileData();
+            loadSettings();
+        });
+    </script>
+</body>
+</html> 

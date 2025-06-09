@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browse Jobs - SkillLink</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .filters {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 0.375rem;
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .filter-btn.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .job-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .job-card {
+            background: white;
+            border-radius: 0.5rem;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            transition: transform 0.2s;
+        }
+
+        .job-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .job-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .job-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .job-category {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: var(--light-background);
+            border-radius: 1rem;
+            font-size: 0.875rem;
+            color: var(--primary-color);
+        }
+
+        .job-details {
+            padding: 1.5rem;
+        }
+
+        .job-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+            color: var(--light-text);
+        }
+
+        .job-info i {
+            width: 1rem;
+            color: var(--primary-color);
+        }
+
+        .job-description {
+            color: var(--text-color);
+            margin-bottom: 1.5rem;
+            line-height: 1.5;
+        }
+
+        .job-budget {
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+        }
+
+        .apply-btn {
+            width: 100%;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <nav class="nav">
+            <div class="logo">SkillLink</div>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="browse-students.html" class="nav-link">Find Help</a>
+                <a href="map-view.html" class="nav-link"><i class="fas fa-map-marker-alt"></i> Map View</a>
+                <a href="browse-jobs.html" class="nav-link">Find Jobs</a>
+                <a href="post-job.html" class="btn btn-primary">Post a Job</a>
+                <a href="create-profile.html" class="btn btn-secondary">Join as Student</a>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <div class="container">
+            <h1 class="text-center mb-4">Find Jobs</h1>
+            
+            <div class="filters">
+                <button class="filter-btn active" data-category="all">All</button>
+                <button class="filter-btn" data-category="tutoring">Tutoring</button>
+                <button class="filter-btn" data-category="tech-support">Tech Support</button>
+                <button class="filter-btn" data-category="babysitting">Babysitting</button>
+                <button class="filter-btn" data-category="moving">Moving Help</button>
+            </div>
+
+            <div class="job-grid" id="jobGrid">
+                <!-- Job cards will be populated by JavaScript -->
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>SkillLink</h4>
+                    <p>Connecting students with opportunities</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="browse-students.html">Find Help</a></li>
+                        <li><a href="browse-jobs.html">Find Jobs</a></li>
+                        <li><a href="post-job.html">Post a Job</a></li>
+                        <li><a href="create-profile.html">Create Profile</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact</h4>
+                    <ul>
+                        <li>Email: support@skilllink.com</li>
+                        <li>Phone: (555) 123-4567</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 SkillLink. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/app.js"></script>
+    <script>
+        // Mock data for jobs
+        const jobs = [
+            {
+                id: 1,
+                title: "Math Tutoring for High School Student",
+                category: "tutoring",
+                description: "Looking for a math tutor for my 10th-grade daughter. Topics include algebra and geometry.",
+                date: "2024-03-15",
+                location: "Casablanca, Maarif",
+                budget: 150
+            },
+            {
+                id: 2,
+                title: "Computer Setup and Software Installation",
+                category: "tech-support",
+                description: "Need help setting up a new computer and installing necessary software for work.",
+                date: "2024-03-20",
+                location: "Rabat, Agdal",
+                budget: 200
+            },
+            {
+                id: 3,
+                title: "Weekend Babysitting",
+                category: "babysitting",
+                description: "Looking for a reliable babysitter for two children (ages 5 and 7) on weekends.",
+                date: "2024-03-16",
+                location: "Marrakech, Gueliz",
+                budget: 120
+            },
+            {
+                id: 4,
+                title: "Moving Assistance",
+                category: "moving",
+                description: "Need help moving furniture and boxes to a new apartment. Heavy lifting required.",
+                date: "2024-03-25",
+                location: "Tangier, Malabata",
+                budget: 180
+            },
+            {
+                id: 5,
+                title: "Arabic Language Tutoring",
+                category: "tutoring",
+                description: "Seeking an Arabic tutor for business communication skills. Focus on Modern Standard Arabic.",
+                date: "2024-03-18",
+                location: "Casablanca, Anfa",
+                budget: 200
+            },
+            {
+                id: 6,
+                title: "Website Development",
+                category: "tech-support",
+                description: "Need help creating a professional website for my small business. WordPress experience preferred.",
+                date: "2024-03-22",
+                location: "Rabat, Hay Riad",
+                budget: 250
+            },
+            {
+                id: 7,
+                title: "French Language Practice",
+                category: "tutoring",
+                description: "Looking for conversation practice in French. Intermediate level, twice a week.",
+                date: "2024-03-19",
+                location: "Marrakech, Hivernage",
+                budget: 150
+            },
+            {
+                id: 8,
+                title: "Event Photography",
+                category: "photography",
+                description: "Need a photographer for a family gathering. 4 hours coverage required.",
+                date: "2024-03-30",
+                location: "Casablanca, Ain Diab",
+                budget: 800
+            },
+            {
+                id: 9,
+                title: "Guitar Lessons",
+                category: "music",
+                description: "Beginner guitar lessons for my 12-year-old son. Weekly sessions preferred.",
+                date: "2024-03-17",
+                location: "Rabat, Souissi",
+                budget: 180
+            },
+            {
+                id: 10,
+                title: "Social Media Management",
+                category: "marketing",
+                description: "Looking for help managing Instagram and Facebook accounts for my restaurant.",
+                date: "2024-03-21",
+                location: "Marrakech, Medina",
+                budget: 300
+            }
+        ];
+
+        // Function to create job card
+        function createJobCard(job) {
+            return `
+                <div class="job-card" data-category="${job.category}">
+                    <div class="job-header">
+                        <h3 class="job-title">${job.title}</h3>
+                        <span class="job-category">${job.category.replace('-', ' ')}</span>
+                    </div>
+                    <div class="job-details">
+                        <div class="job-info">
+                            <i class="fas fa-calendar"></i>
+                            <span>${new Date(job.date).toLocaleDateString()}</span>
+                        </div>
+                        <div class="job-info">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>${job.location}</span>
+                        </div>
+                        <p class="job-description">${job.description}</p>
+                        <div class="job-budget">$${job.budget}/hour</div>
+                        <button class="btn btn-primary apply-btn" onclick="handleApply(${job.id})">
+                            Apply Now
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Function to render jobs
+        function renderJobs(category = 'all') {
+            const grid = document.getElementById('jobGrid');
+            const filteredJobs = category === 'all' 
+                ? jobs 
+                : jobs.filter(job => job.category === category);
+            
+            grid.innerHTML = filteredJobs.map(createJobCard).join('');
+        }
+
+        // Handle filter clicks
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                renderJobs(btn.dataset.category);
+            });
+        });
+
+        // Handle apply button click
+        function handleApply(jobId) {
+            showSuccessMessage('Application submitted successfully!');
+        }
+
+        // Initial render
+        renderJobs();
+    </script>
+</body>
+</html> 

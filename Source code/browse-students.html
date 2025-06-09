@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browse Students - SkillLink</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .filters {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 0.375rem;
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .filter-btn.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .student-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .student-card {
+            background: white;
+            border-radius: 0.5rem;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            transition: transform 0.2s;
+        }
+
+        .student-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .student-image {
+            width: 100%;
+            height: 200px;
+            background: #E5E7EB;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--light-text);
+        }
+
+        .student-info {
+            padding: 1.5rem;
+        }
+
+        .student-name {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .student-rate {
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .skill-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .skill-tag {
+            background: var(--light-background);
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.875rem;
+        }
+
+        .student-description {
+            color: var(--light-text);
+            margin-bottom: 1.5rem;
+            line-height: 1.5;
+        }
+
+        .request-btn {
+            width: 100%;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <nav class="nav">
+            <div class="logo">SkillLink</div>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="browse-students.html" class="nav-link">Find Help</a>
+                <a href="map-view.html" class="nav-link"><i class="fas fa-map-marker-alt"></i> Map View</a>
+                <a href="browse-jobs.html" class="nav-link">Find Jobs</a>
+                <a href="post-job.html" class="btn btn-primary">Post a Job</a>
+                <a href="create-profile.html" class="btn btn-secondary">Join as Student</a>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <div class="container">
+            <h1 class="text-center mb-4">Find Help</h1>
+            
+            <div class="filters">
+                <button class="filter-btn active" data-category="all">All</button>
+                <button class="filter-btn" data-category="tutoring">Tutoring</button>
+                <button class="filter-btn" data-category="tech-support">Tech Support</button>
+                <button class="filter-btn" data-category="babysitting">Babysitting</button>
+                <button class="filter-btn" data-category="moving">Moving Help</button>
+            </div>
+
+            <div class="student-grid" id="studentGrid">
+                <!-- Student cards will be populated by JavaScript -->
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>SkillLink</h4>
+                    <p>Connecting students with opportunities</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="browse-students.html">Find Help</a></li>
+                        <li><a href="browse-jobs.html">Find Jobs</a></li>
+                        <li><a href="post-job.html">Post a Job</a></li>
+                        <li><a href="create-profile.html">Create Profile</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact</h4>
+                    <ul>
+                        <li>Email: support@skilllink.com</li>
+                        <li>Phone: (555) 123-4567</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 SkillLink. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/app.js"></script>
+    <script>
+        // Mock data for students
+        const students = [
+            {
+                id: 1,
+                name: "Amina Benali",
+                rate: 150,
+                skills: ["Math", "Science", "Tutoring"],
+                description: "Computer Science major at Université Mohammed V with 3 years of tutoring experience. Specializing in math and programming.",
+                category: "tutoring"
+            },
+            {
+                id: 2,
+                name: "Mehdi Alami",
+                rate: 200,
+                skills: ["Tech Support", "Programming", "Web Development"],
+                description: "IT student at ENSIAS offering tech support and programming help. Experienced with various programming languages.",
+                category: "tech-support"
+            },
+            {
+                id: 3,
+                name: "Fatima Zahra",
+                rate: 120,
+                skills: ["Babysitting", "Child Care", "First Aid"],
+                description: "Education major at Université Hassan II with CPR certification. Experienced in childcare and early education.",
+                category: "babysitting"
+            },
+            {
+                id: 4,
+                name: "Youssef El Fathi",
+                rate: 180,
+                skills: ["Moving", "Heavy Lifting", "Organization"],
+                description: "Strong and reliable student available for moving assistance and heavy lifting tasks.",
+                category: "moving"
+            },
+            {
+                id: 5,
+                name: "Laila Benjelloun",
+                rate: 200,
+                skills: ["Arabic", "French", "Translation"],
+                description: "Linguistics student offering language tutoring and translation services. Fluent in Arabic, French, and English.",
+                category: "tutoring"
+            },
+            {
+                id: 6,
+                name: "Karim Bennis",
+                rate: 250,
+                skills: ["Photography", "Photo Editing", "Videography"],
+                description: "Professional photography student with experience in event coverage and portrait photography.",
+                category: "photography"
+            },
+            {
+                id: 7,
+                name: "Sara El Malki",
+                rate: 180,
+                skills: ["Music", "Guitar", "Piano"],
+                description: "Music student offering private lessons in guitar and piano. Suitable for all ages and levels.",
+                category: "music"
+            },
+            {
+                id: 8,
+                name: "Omar Cherkaoui",
+                rate: 300,
+                skills: ["Digital Marketing", "Social Media", "Content Creation"],
+                description: "Marketing student specializing in social media management and digital content creation.",
+                category: "marketing"
+            }
+        ];
+
+        // Function to create student card
+        function createStudentCard(student) {
+            return `
+                <div class="student-card" data-category="${student.category}">
+                    <div class="student-image">
+                        <i class="fas fa-user fa-3x"></i>
+                    </div>
+                    <div class="student-info">
+                        <h3 class="student-name">${student.name}</h3>
+                        <div class="student-rate">$${student.rate}/hour</div>
+                        <div class="skill-tags">
+                            ${student.skills.map(skill => `<span class="skill-tag">${skill}</span>`).join('')}
+                        </div>
+                        <p class="student-description">${student.description}</p>
+                        <button class="btn btn-primary request-btn" onclick="handleRequest(${student.id})">
+                            Send Request
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Function to render students
+        function renderStudents(category = 'all') {
+            const grid = document.getElementById('studentGrid');
+            const filteredStudents = category === 'all' 
+                ? students 
+                : students.filter(student => student.category === category);
+            
+            grid.innerHTML = filteredStudents.map(createStudentCard).join('');
+        }
+
+        // Handle filter clicks
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                renderStudents(btn.dataset.category);
+            });
+        });
+
+        // Handle request button click
+        function handleRequest(studentId) {
+            showSuccessMessage('Request sent successfully!');
+        }
+
+        // Initial render
+        renderStudents();
+    </script>
+</body>
+</html> 
